@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<head>
+    <title>WebSocket 테스트</title>
+    <script src="./dist/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+</head>
+<body>
+    <h2>WebSocket Test</h2>
+    <button id="send_button" >send</button>
+    <div id="output"></div>
+
+</body>
+<script language="javascript" type="text/javascript">
+ 
+    var wsUri = "wss://localhost:3000";
+    var output;
+    function init()
+    {
+        output = document.getElementById("output");
+        settingWebSocket();
+    }
+ 
+    function settingWebSocket()
+    {
+        websocket = new WebSocket(wsUri);
+        websocket.onopen = function(evt) { onOpen(evt) ;};
+        websocket.onclose = function(evt) { onClose(evt) };
+        websocket.onmessage = function(evt) { onMessage(evt) };
+        websocket.onerror = function(evt) { onError(evt) };
+    }
+ 
+    function onOpen(evt)
+    {
+        writeToScreen("연결완료");
+    }
+ 
+    function onClose(evt)
+    {
+        writeToScreen("연결해제");
+    }
+ 
+    function onMessage(evt)
+    {
+        writeToScreen('<span style="color: blue;">수신: ' + JSON.parse(evt.data).str+'</span>');
+    }
+ 
+    function onError(evt)
+    {
+        writeToScreen('<span style="color: red;">에러:</span> ' + evt.data);
+    }
+ 
+    function writeToScreen(message)
+    {
+        var pre = document.createElement("p");
+        pre.style.wordWrap = "break-word";
+        pre.innerHTML = message;
+        output.appendChild(pre);
+    }
+ 
+    window.addEventListener("load", init, false);
+ 
+    $("#send_button").click(function(){
+        var message = "dummy string data"
+        writeToScreen("발신: " + message);
+        websocket.send(message);
+    });
+
+</script>
+</html>
